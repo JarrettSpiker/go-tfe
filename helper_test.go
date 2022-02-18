@@ -763,6 +763,8 @@ func createPrivateRegistryProvider(t *testing.T, client *Client, org *Organizati
 		t.Fatal(err)
 	}
 
+	prv.Organization = org
+
 	return prv, func() {
 		id := RegistryProviderID{
 			OrganizationName: org.Name,
@@ -801,6 +803,8 @@ func createPublicRegistryProvider(t *testing.T, client *Client, org *Organizatio
 		t.Fatal(err)
 	}
 
+	prv.Organization = org
+
 	return prv, func() {
 		id := RegistryProviderID{
 			OrganizationName: org.Name,
@@ -838,11 +842,14 @@ func createRegistryProviderVersion(t *testing.T, client *Client, provider *Regis
 
 	options := RegistryProviderVersionCreateOptions{
 		Version: randomSemver(t),
+		KeyID:   randomString(t),
 	}
 	prvv, err := client.RegistryProviderVersions.Create(ctx, providerId, options)
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	prvv.RegistryProvider = provider
 
 	return prvv, func() {
 		id := RegistryProviderVersionID{
